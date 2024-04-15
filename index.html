@@ -1,1 +1,58 @@
-<h1> Hello </h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Input/Output</title>
+<script>
+function extractDatabindingValues(jsonSchema) {
+  var elements = jsonSchema.elements;
+
+  var databindingentries = [];
+
+  Object.keys(elements).forEach((element) => {
+    if (element.endsWith("value")) {
+      orid = elements[element.replace("value", "orid")].fixedValue;
+      var databindingentry = `orid_${orid}: ${elements[element].dataBindingName}`;
+      databindingentries.push(databindingentry);
+    }
+  });
+  return databindingentries.join("\n");
+};
+
+function processInput() {
+    var input = document.getElementById('inputArea').value;
+
+    var parsed = JSON.parse(input);
+    var output = extractDatabindingValues(parsed)
+    var outputArea = document.getElementById('outputArea')
+    outputArea.value = output
+
+    resizeTextarea(outputArea);
+}
+
+function resizeTextarea(textarea) {
+    textarea.style.height = 'auto' 
+    textarea.style.height = textarea.scrollHeight + 'px' 
+}
+
+function copyOutput() {
+    var outputText = document.getElementById('outputArea')
+    outputText.select()
+    outputText.setSelectionRange(0, 99999)
+    document.execCommand('copy')
+}
+</script>
+</head>
+<body>
+<h1>Altinn 3 databinding values</h1>
+<textarea id="inputArea" rows="4" cols="50" placeholder="Paste model metadata here"></textarea>
+<br>
+<button onclick="processInput()">Generate databinding values with ORID</button>
+<br >
+<button onclick="copyOutput()">Copy Output</button>
+
+<br>
+<textarea id="outputArea"  rows="4" cols="100" placeholder="The databinding values will appear here" readonly></textarea>
+</body>
+</html>
